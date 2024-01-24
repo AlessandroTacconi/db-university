@@ -62,7 +62,7 @@ ON `courses`.`degree_id` = `degrees`.`id`;
 6. Selezionare tutti i docenti che insegnano nel Dipartimento di
 Matematica (54)
 
-SELECT `departments`.`name`, `teachers`.`name`, `teachers`.`surname`
+SELECT DISTINCT `departments`.`name`, `teachers`.`name`, `teachers`.`surname`
 FROM `teachers`
 INNER JOIN `course_teacher` ON `teachers`.`id` = `course_teacher`.`teacher_id`
 INNER JOIN `courses` ON `course_teacher`.`course_id` = `courses`.`id`
@@ -91,6 +91,26 @@ MAX(`vote`) AS `voto_massimo`
 FROM `exam_student`
 WHERE `vote` >= 18
 GROUP BY `student_id`;
+
+---------------------------------------
+
+SELECT
+    students.id,
+    students.name,
+    students.surname,
+    courses.name,
+    COUNT(exam_student.vote) AS `numero_tentativi`,
+   MAX(exam_student.vote) AS `voto_massimo`,
+   MIN(exam_student.vote) AS `voto_minimo`
+FROM
+    `students`
+INNER JOIN `exam_student` ON `students`.`id` = `exam_student`.`student_id`
+INNER JOIN `exams` ON `exam_student`.`exam_id` = `exams`.`id`
+INNER JOIN `courses` ON `exams`.`course_id` = `courses`.id
+GROUP BY
+    students.id,
+    courses.id
+HAVING `voto_minimo` > 18
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
